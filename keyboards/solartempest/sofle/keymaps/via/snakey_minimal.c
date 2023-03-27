@@ -177,9 +177,7 @@
 	#if !defined(OLED_NO_SLAVE) && !defined(OLED_NO_MASTER)
 		static void print_logo_narrow(void) {
 			oled_set_cursor(0,4);
-			oled_write("SOLAR", false);
-			oled_set_cursor(0,5);
-			oled_write("TMPST", false);
+			oled_write("AR4KA", false);
 		 
 			#ifdef OLED_LOGO
 				render_logo(0,9); //Not defining this in config.h will save space (+112).

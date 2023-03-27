@@ -31,15 +31,6 @@
 		#include "snakey_minimal.c" //OLED code for Snakey, without WPM/related animations to save space. If not used, do not use OLED_LOGO in config.h.
 #endif
 
-#ifdef POINTING_DEVICE_ENABLE
-	bool trackball_is_scrolling = true;		//Default mode is scrolling
-	bool trackball_is_precision = false;	//Default mode is less precise
-	bool was_scrolling = true;	//Remember preferred state of trackball scrolling
-#endif
-
-#ifdef HAPTIC_ENABLE
-	#include "drivers/haptic/DRV2605L.h"
-#endif
 
 #if defined(RGBLIGHT_ENABLE) && defined(RGBLIGHT_LAYERS)
 	extern rgblight_config_t rgblight_config; // To pull layer status for RGBLIGHT
@@ -139,60 +130,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {  //Can skip these
 };
 
 
-#ifdef POINTING_DEVICE_ENABLE
-	void run_trackball_cleanup(void) {	//Set colour of trackball LED. Does not require RGBLIGHT_ENABLE if colour shorthands are not used.
-		#ifdef POINTING_DEVICE_ENABLE
-		if (trackball_is_scrolling) {
-			pimoroni_trackball_set_rgbw(43, 153, 103, 0x00);
-		} else if (!trackball_is_precision) {
-			pimoroni_trackball_set_rgbw(0, 27, 199, 0x00);
-		} else {
-			pimoroni_trackball_set_rgbw(217, 165, 33, 0x00);	//RGB_GOLDENROD in number form. 
-		}
-		#endif
-	}
-	
-	uint8_t pointing_device_handle_buttons(uint8_t buttons, bool pressed, pointing_device_buttons_t button) {
-		if (pressed) {
-			buttons |= 1 << (button);
-			#ifdef HAPTIC_ENABLE	//Haptic feedback when trackball button is pressed
-				DRV_pulse(4);		//sharp_click
-			#endif
-		} else {
-			buttons &= ~(1 << (button));
-		}
-		return buttons;
-	}
-
-	report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-		if (trackball_is_scrolling) {
-			mouse_report.h = mouse_report.x;
-			#ifndef PIMORONI_TRACKBALL_INVERT_X
-				mouse_report.v = 0.3*mouse_report.y;	//Multiplier to lower scrolling sensitivity
-			#else
-				mouse_report.v = 0.3*-mouse_report.y;	//invert vertical scroll direction
-			#endif
-			mouse_report.x = mouse_report.y = 0;
-		}
-		return mouse_report;
-	}
-
-	#if !defined(MOUSEKEY_ENABLE)	//Allows for button clicks on keymap even though mousekeys is not defined.
-		static bool mouse_button_one, trackball_button_one;
-	#endif
-
-	void trackball_register_button(bool pressed, enum mouse_buttons button) {
-		report_mouse_t currentReport = pointing_device_get_report();
-		if (pressed) {
-			currentReport.buttons |= button;
-		} else {
-			currentReport.buttons &= ~button;
-		}
-		pointing_device_set_report(currentReport);
-	}
-#endif
-
-
 void matrix_scan_user(void) {
 	#ifdef SUPER_ALT_TAB_ENABLE
 		if (is_alt_tab_active) {	//Allows for use of super alt tab.
@@ -216,9 +153,7 @@ void matrix_scan_user(void) {
 	#ifdef ENCODER_ENABLE
 		encoder_action_unregister();
 	#endif
-	if (timer_elapsed32(oled_timer) > 60000) { //60000ms = 60s
-		pimoroni_trackball_set_rgbw(0,0,0, 0x00); //Turn off Pimoroni trackball LED when computer is idle for 1 minute. Would use suspend_power_down_user but the code is not working.
-	}
+
 }
 
 
@@ -443,46 +378,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 			case 0:
 				//rgblight_sethsv_noeeprom(50,255,80);	//green-blue gradient
 				rgblight_sethsv_noeeprom(115,170,80);	//pale blue gradient
-				#ifdef POINTING_DEVICE_ENABLE
-					if (was_scrolling==true){ //Check if was scrolling when layer was left
-						trackball_is_scrolling=true;
-						run_trackball_cleanup();
-					} else{
-						trackball_is_scrolling=false;
-						run_trackball_cleanup();
-					}
-				#endif
+				
 				break;
 			case 1:
 				rgblight_sethsv_noeeprom(252,255,80);
-				#ifdef HAPTIC_ENABLE	//Set different patterns for haptic feedback layer indication
-					DRV_pulse(69);		//transition_hum_10
-				#endif
+				
 				break;
 			case 2:
 				rgblight_sethsv_noeeprom(80,255,80);
-				#ifdef HAPTIC_ENABLE
-					DRV_pulse(37);		//lg_dblclick_str
-				#endif
+				
 				break;
 			case 3:
 				//rgblight_sethsv_noeeprom(118,255,80);	//blue-purple gradient
 				rgblight_sethsv_noeeprom(160,255,80);	//blue-magenta gradient
-				#ifdef HAPTIC_ENABLE
-					DRV_pulse(31);		//sh_dblclick_med
-				#endif
+				
 				break;
 			case 4:
 				rgblight_sethsv_noeeprom(218,255,80);
-				#ifdef HAPTIC_ENABLE
-					DRV_pulse(7);		//soft_bump
-				#endif
-				#ifdef POINTING_DEVICE_ENABLE	//Set trackball mouse mode when layer 4 is activated
-					if (was_scrolling==true){	//Check if in scrolling mode when layer was activated
-						trackball_is_scrolling=false;
-						run_trackball_cleanup();
-					}
-				#endif
+				
 		  }
 		return state;
 	}
@@ -491,9 +404,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 	{
 		if(led_state.caps_lock){
 			rgblight_sethsv_range(43,100,170, 4,7); //White-left caps lock indication
-		}
-		if(!(led_state.num_lock)){
-			rgblight_sethsv_range(43,100,170, 28,31); //White-right num lock indication. Since this indicator is inverted, it must be on the master side of the keyboard to shut off properly when the computer is sleeping.
 		}
 		if(led_state.scroll_lock){
 			rgblight_sethsv_range(43,100,170, 16,19); //White-middle scroll lock indication
@@ -509,10 +419,7 @@ void keyboard_post_init_user(void)
 		rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_GRADIENT+8); //Set to static gradient 9
 	#endif
 	layer_move(0); 						//Start on layer0 by default to set LED colours. Can remove to save a very small amount of space.
-	#ifdef POINTING_DEVICE_ENABLE
-		pimoroni_trackball_set_precision(1.75);	//Start trackball with lower precision mode
-		run_trackball_cleanup();
-	#endif
+	
 }
 
 #ifdef POINTING_DEVICE_ENABLE

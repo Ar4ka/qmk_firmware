@@ -220,9 +220,7 @@
 
 	static void print_logo_narrow(void) {
 		oled_set_cursor(0,3);
-		oled_write("SOLAR", false);
-		oled_set_cursor(0,4);
-		oled_write("TMPST", false);
+		oled_write("AR4KA", false);
 	 
 	 	/* wpm counter */
 		oled_set_cursor(0,10);
@@ -231,18 +229,7 @@
 	}
 	 
 	static void print_status_narrow(void) {
-		/*switch (get_highest_layer(default_layer_state)) { //Not required as only one default layer is used
-			case 0:
-				oled_write("SOLAR", false);
-				break;
-			case 1:
-				oled_write("GAME", false);
-				break;
-			default:
-				oled_write("UNDEF", false);
-		}*/
-	 
-		/* Print current layer */
+
 		oled_set_cursor(0,2);
 		oled_write("LAYER", false);
 	 

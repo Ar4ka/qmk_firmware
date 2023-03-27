@@ -22,10 +22,4 @@ COMBO_ENABLE = no				# Tap combo chording (+952)
 
 OLED_ENABLE = yes				# Must be disabled if OLEDs are not installed (+3608-4774 with pet)
 OLED_DRIVER = SSD1306			# Specify OLED driver
-WPM_ENABLE = no					# WPM counter for typing-speed-reactive keyboard pets (+782)
-
-POINTING_DEVICE_ENABLE = yes	# Enable Pimoroni Trackball on master (+2304)
-POINTING_DEVICE_DRIVER = pimoroni_trackball
-
-HAPTIC_ENABLE = no				# Enable Pimoroni Haptic Bzzz LRA (+1192)
-HAPTIC_DRIVER += DRV2605L
+WPM_ENABLE = yes					# WPM counter for typing-speed-reactive keyboard pets (+782)
