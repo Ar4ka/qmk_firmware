@@ -27,6 +27,7 @@
 #define PRODUCT         Solarius_Sofle //New unique name
 #define DESCRIPTION     Rose version of the Sofle
 
+
 // Set which side is master
 #define MASTER_LEFT
 //#define EE_HANDS //Use this if EEPROM setting is desired instead
@@ -36,7 +37,7 @@
 #define MATRIX_ROWS 10
 #define MATRIX_COLS 7
 #define MATRIX_ROW_PINS { C6, D7, E6, B4, B5 }
-#define MATRIX_COL_PINS { F7, F6, B6, B2, B3, B1, NO_PIN } //NO_PIN is used for the encoder key matrix in via.
+#define MATRIX_COL_PINS { F6, F7, B1, B3, B2, B6, NO_PIN } //NO_PIN is used for the encoder key matrix in via.
 #define MATRIX_ROW_PINS_RIGHT { C6, D7, E6, B4, B5 }
 #define MATRIX_COL_PINS_RIGHT { F6, F7, B1, B3, B2, B6, NO_PIN } //NO_PIN is used for the encoder key matrix in via.
 #define DIODE_DIRECTION COL2ROW
@@ -75,7 +76,7 @@
 #define ENCODERS_PAD_B { F4 }
 #define ENCODERS_PAD_A_RIGHT { F4 }
 #define ENCODERS_PAD_B_RIGHT { F5 }
-#define ENCODER_RESOLUTIONS { 4, 2 } //Left encoder seems to have double-output issue but right does not. This resolves that issue.
+#define ENCODER_RESOLUTIONS { 2, 1 } //Left encoder seems to have double-output issue but right does not. This resolves that issue.
 
 // Communication between sides
 #define SOFT_SERIAL_PIN D2

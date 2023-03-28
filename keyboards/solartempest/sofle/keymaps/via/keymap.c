@@ -377,7 +377,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 		switch (get_highest_layer(state)) { // Change all other LEDs based on layer state as well
 			case 0:
 				//rgblight_sethsv_noeeprom(50,255,80);	//green-blue gradient
-				rgblight_sethsv_noeeprom(115,170,80);	//pale blue gradient
+				rgblight_sethsv_noeeprom(190,255,99);	//pale blue gradient
 				
 				break;
 			case 1:
